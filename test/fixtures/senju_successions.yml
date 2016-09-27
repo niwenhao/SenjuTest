@@ -1,0 +1,17 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  left: one
+  left_type: Left
+  right: one
+  right_type: Right
+  task: one
+  task_type: Task
+
+two:
+  left: two
+  left_type: Left
+  right: two
+  right_type: Right
+  task: two
+  task_type: Task

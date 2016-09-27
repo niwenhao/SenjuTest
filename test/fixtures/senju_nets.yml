@@ -1,0 +1,19 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  name: MyString
+  description: MyString
+  senjuEnv: one
+  preExec: one
+  preExec_type: Preexec
+  postExec: one
+  postExec_type: Postexec
+
+two:
+  name: MyString
+  description: MyString
+  senjuEnv: two
+  preExec: two
+  preExec_type: Preexec
+  postExec: two
+  postExec_type: Postexec

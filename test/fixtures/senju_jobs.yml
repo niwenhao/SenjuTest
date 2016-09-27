@@ -8,6 +8,10 @@ one:
   senjuEnv: one
   task: one
   task_type: Task
+  preExec: one
+  preExec_type: Preexec
+  postExec: one
+  postExec_type: Postexec
 
 two:
   name: MyString
@@ -17,3 +21,7 @@ two:
   senjuEnv: two
   task: two
   task_type: Task
+  preExec: two
+  preExec_type: Preexec
+  postExec: two
+  postExec_type: Postexec

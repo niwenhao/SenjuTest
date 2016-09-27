@@ -1,0 +1,2 @@
+class SenjuEnv < ApplicationRecord
+end

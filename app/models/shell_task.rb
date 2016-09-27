@@ -1,0 +1,2 @@
+class ShellTask < ApplicationRecord
+end

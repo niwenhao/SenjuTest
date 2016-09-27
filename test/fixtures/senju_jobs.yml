@@ -1,0 +1,19 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  name: MyString
+  description: MyString
+  command: MyString
+  expected: 1
+  senjuEnv: one
+  task: one
+  task_type: Task
+
+two:
+  name: MyString
+  description: MyString
+  command: MyString
+  expected: 1
+  senjuEnv: two
+  task: two
+  task_type: Task

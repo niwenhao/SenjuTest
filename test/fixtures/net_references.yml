@@ -1,0 +1,11 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  senjuNet: one
+  senjuObject: one
+  senjuObject_type: Senjuobject
+
+two:
+  senjuNet: two
+  senjuObject: two
+  senjuObject_type: Senjuobject

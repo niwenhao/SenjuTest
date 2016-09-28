@@ -104,8 +104,63 @@ class ImportSenjuScriptJob < ApplicationJob
       children.each do |item|
           appendChild(ent, item)
       end
+      
+      children.each do |item|
+          setupAssociation ent, item
+      end
 
       ent.save()
+  end
+
+  def addAssociation(net, child, pre_type, pre_name)
+      pre_child = net.netReferences.select { |r| r.senjuObject.name == pre_name }
+      succession = SenjuSuccession.new left: pre_child, right: child
+  end
+
+  def setupAssociation(net, items)
+      child_type = items[SenjuNet::TYPE]
+      child_name = items[SenjuNet::REF_NAME]
+
+      child = net.netReferences.select { |r| r.senjuObject.name == child_name }
+
+      for i in 0 .. SenjuNet::PRECEDE_COUNT - 1
+          pre_type = items[SenjuNet::PRECEDE_START + i * 2]
+          pre_name = items[SenjuNet::PRECEDE_START + i * 2 + 1]
+          addAssociation(net, child, pre_type, pre_name)
+      end
+  end
+
+  def find_or_create_net(name)
+      ent = SenjuNet.find_by name: name
+      if not ent then
+          ent = SenjuNet.new name: name
+      end
+      return ent
+  end
+
+  def appendChild(net, items)
+      child_type = items[SenjuNet::TYPE]
+      child_name = items[SenjuNet::REF_NAME]
+      child_env = items[SenjuNet::EXECENV]
+      child_ent = nil
+
+      child_ref = NetReferences.new senjuNet: net
+
+      case child_type
+      when SenjuNet::NET_TYPE then
+          child_ref.senjuObject = find_or_create_net(child_name)
+      when SenjuNet::JOB_TYPE then
+          child_ref.senjuObject = SenjuJob.find_by name: child_name
+          raise "Failed to find job by #{child_name}" unless child_ref.senjuObject
+      when SenjuNet::TRG_TYPE then
+          child_ref.senjuObject = SenjuTriger.find_by name: child_name
+          raise "Failed to find triger by #{child_name}" unless child_ref.senjuObject
+      end
+
+      if child_env <> "" then
+          child_ref.senjuEnv = SenjuEnv.find_by name: child_env
+          raise "Failed to find environment by #{child_env}" unless child_ref.senjuEnv
+      end
   end
 
 end

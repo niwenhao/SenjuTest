@@ -10,7 +10,17 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160927090109) do
+ActiveRecord::Schema.define(version: 20160928010112) do
+
+  create_table "net_references", force: :cascade do |t|
+    t.integer  "senjuNet_id"
+    t.string   "senjuObject_type"
+    t.integer  "senjuObject_id"
+    t.datetime "created_at",       null: false
+    t.datetime "updated_at",       null: false
+    t.index ["senjuNet_id"], name: "index_net_references_on_senjuNet_id"
+    t.index ["senjuObject_type", "senjuObject_id"], name: "index_net_references_on_senjuObject_type_and_senjuObject_id"
+  end
 
   create_table "senju_envs", force: :cascade do |t|
     t.string   "logonUser"
@@ -55,16 +65,14 @@ ActiveRecord::Schema.define(version: 20160927090109) do
   end
 
   create_table "senju_successions", force: :cascade do |t|
-    t.string   "left_type"
     t.integer  "left_id"
-    t.string   "right_type"
     t.integer  "right_id"
     t.string   "task_type"
     t.integer  "task_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["left_type", "left_id"], name: "index_senju_successions_on_left_type_and_left_id"
-    t.index ["right_type", "right_id"], name: "index_senju_successions_on_right_type_and_right_id"
+    t.index ["left_id"], name: "index_senju_successions_on_left_id"
+    t.index ["right_id"], name: "index_senju_successions_on_right_id"
     t.index ["task_type", "task_id"], name: "index_senju_successions_on_task_type_and_task_id"
   end
 

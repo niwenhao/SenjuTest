@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160928010112) do
+ActiveRecord::Schema.define(version: 20160928044754) do
 
   create_table "net_references", force: :cascade do |t|
     t.integer  "senjuNet_id"
@@ -18,6 +18,8 @@ ActiveRecord::Schema.define(version: 20160928010112) do
     t.integer  "senjuObject_id"
     t.datetime "created_at",       null: false
     t.datetime "updated_at",       null: false
+    t.integer  "senjuEnv_id"
+    t.index ["senjuEnv_id"], name: "index_net_references_on_senjuEnv_id"
     t.index ["senjuNet_id"], name: "index_net_references_on_senjuNet_id"
     t.index ["senjuObject_type", "senjuObject_id"], name: "index_net_references_on_senjuObject_type_and_senjuObject_id"
   end
@@ -27,6 +29,8 @@ ActiveRecord::Schema.define(version: 20160928010112) do
     t.string   "hostName"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string   "name"
+    t.index ["name"], name: "index_senju_envs_on_name"
   end
 
   create_table "senju_jobs", force: :cascade do |t|
@@ -43,6 +47,7 @@ ActiveRecord::Schema.define(version: 20160928010112) do
     t.integer  "postExec_id"
     t.datetime "created_at",    null: false
     t.datetime "updated_at",    null: false
+    t.index ["name"], name: "index_senju_jobs_on_name"
     t.index ["postExec_type", "postExec_id"], name: "index_senju_jobs_on_postExec_type_and_postExec_id"
     t.index ["preExec_type", "preExec_id"], name: "index_senju_jobs_on_preExec_type_and_preExec_id"
     t.index ["senjuEnv_id"], name: "index_senju_jobs_on_senjuEnv_id"
@@ -59,6 +64,7 @@ ActiveRecord::Schema.define(version: 20160928010112) do
     t.integer  "postExec_id"
     t.datetime "created_at",    null: false
     t.datetime "updated_at",    null: false
+    t.index ["name"], name: "index_senju_nets_on_name"
     t.index ["postExec_type", "postExec_id"], name: "index_senju_nets_on_postExec_type_and_postExec_id"
     t.index ["preExec_type", "preExec_id"], name: "index_senju_nets_on_preExec_type_and_preExec_id"
     t.index ["senjuEnv_id"], name: "index_senju_nets_on_senjuEnv_id"
@@ -85,6 +91,7 @@ ActiveRecord::Schema.define(version: 20160928010112) do
     t.integer  "postExec_id"
     t.datetime "created_at",    null: false
     t.datetime "updated_at",    null: false
+    t.index ["name"], name: "index_senju_trigers_on_name"
     t.index ["postExec_type", "postExec_id"], name: "index_senju_trigers_on_postExec_type_and_postExec_id"
   end
 

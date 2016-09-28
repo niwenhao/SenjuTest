@@ -14,3 +14,6 @@ commands:
     rails g model SenjuTriger name:string description:string node:string path:string postExec:references{polymorphic}
     rails g model SenjuSuccession left:references right:references task:references{polymorphic}
     rails g model NetReference senjuNet:references senjuObject:references{polymorphic}
+    rails g migration AddEnvToNetReference senjuEnv:references
+    rails g migration AddNameToSenjuEnv name:string:index
+    rails g migration AddNameIndexToSenjuJob name:index

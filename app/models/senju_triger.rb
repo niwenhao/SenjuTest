@@ -1,3 +1,7 @@
 class SenjuTriger < ApplicationRecord
-  belongs_to :postExec, polymorphic: true
+    NAME = 0
+    NODE = 2
+    PATH = 3
+    DESC = 10
+  belongs_to :postExec, polymorphic: true, dependent: :destroy
 end

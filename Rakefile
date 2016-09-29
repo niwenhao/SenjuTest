@@ -6,6 +6,7 @@ require_relative 'config/application'
 Rails.application.load_tasks
 
 namespace :senju do
+  desc "senju define script"
   task :importjar => :environment do
     SenjuJob.all.each do |j|
       print "job =================> #{j.name}\n"

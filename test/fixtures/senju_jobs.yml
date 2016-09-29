@@ -1,27 +1,23 @@
 # Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
-one:
-  name: MyString
-  description: MyString
-  command: MyString
-  expected: 1
-  senjuEnv: one
-  task: one
-  task_type: Task
-  preExec: one
-  preExec_type: Preexec
-  postExec: one
-  postExec_type: Postexec
+timeout:
+  name: timeout
+  description: monitor access log for timeout record
+  command: ls /etc
+  expected: 0
+  senjuEnv: web
 
-two:
-  name: MyString
-  description: MyString
-  command: MyString
-  expected: 1
-  senjuEnv: two
-  task: two
-  task_type: Task
-  preExec: two
-  preExec_type: Preexec
-  postExec: two
-  postExec_type: Postexec
+start:
+  name: start
+  description: start schedular with preExec and postExec
+  command: ls /var
+  expected: 0
+  senjuEnv: bat
+  preExec: clear_log (ShellTask)
+  postExec: afterfollow (ShellTask)
+
+process:
+  name: proces_log
+  description: log process
+  command: something
+  expected: 0

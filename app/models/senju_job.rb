@@ -7,8 +7,7 @@ class SenjuJob < ApplicationRecord
 
     SENJU_TYPE = "ジョブ"
 
-    belongs_to :senjuEnv
-    belongs_to :task, polymorphic: true, dependent: :destroy
-    belongs_to :preExec, polymorphic: true, dependent: :destroy
-    belongs_to :postExec, polymorphic: true, dependent: :destroy
+    belongs_to :senjuEnv, optional: true
+    belongs_to :preExec, polymorphic: true, dependent: :destroy, optional: true
+    belongs_to :postExec, polymorphic: true, dependent: :destroy, optional: true
 end

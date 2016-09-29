@@ -1,11 +1,21 @@
 # Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
-one:
-  senjuNet: one
-  senjuObject: one
-  senjuObject_type: Senjuobject
+stat1:
+  senjuNet: stat
+  senjuObject: timeout(SenjuJob)
 
-two:
-  senjuNet: two
-  senjuObject: two
-  senjuObject_type: Senjuobject
+stat2:
+  senjuNet: stat
+  senjuObject: night(SenjuNet)
+
+stat3:
+  senjuNet: stat
+  senjuObject: start(SenjuJob)
+
+night1:
+  senjuNet: night
+  senjuObject: start(SenjuJob)
+
+night2:
+  senjuNet: night
+  senjuObject: process(SenjuJob)

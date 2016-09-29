@@ -1,19 +1,13 @@
 # Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
-one:
-  name: MyString
-  description: MyString
-  senjuEnv: one
-  preExec: one
-  preExec_type: Preexec
-  postExec: one
-  postExec_type: Postexec
+stat:
+  name: statistics
+  description: net for statistics
+  senjuEnv: adm
+  preExec: clear_log(ShellTask)
+  postExec: afterfollow(ShellTask)
 
-two:
-  name: MyString
-  description: MyString
-  senjuEnv: two
-  preExec: two
-  preExec_type: Preexec
-  postExec: two
-  postExec_type: Postexec
+night:
+  name: nighttask
+  description: Process in night
+  senjuEnv: bat

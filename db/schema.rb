@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160928044754) do
+ActiveRecord::Schema.define(version: 20160929043945) do
 
   create_table "net_references", force: :cascade do |t|
     t.integer  "senjuNet_id"
@@ -39,8 +39,6 @@ ActiveRecord::Schema.define(version: 20160928044754) do
     t.string   "command"
     t.integer  "expected"
     t.integer  "senjuEnv_id"
-    t.string   "task_type"
-    t.integer  "task_id"
     t.string   "preExec_type"
     t.integer  "preExec_id"
     t.string   "postExec_type"
@@ -51,7 +49,6 @@ ActiveRecord::Schema.define(version: 20160928044754) do
     t.index ["postExec_type", "postExec_id"], name: "index_senju_jobs_on_postExec_type_and_postExec_id"
     t.index ["preExec_type", "preExec_id"], name: "index_senju_jobs_on_preExec_type_and_preExec_id"
     t.index ["senjuEnv_id"], name: "index_senju_jobs_on_senjuEnv_id"
-    t.index ["task_type", "task_id"], name: "index_senju_jobs_on_task_type_and_task_id"
   end
 
   create_table "senju_nets", force: :cascade do |t|

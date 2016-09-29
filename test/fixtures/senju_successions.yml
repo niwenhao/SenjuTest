@@ -1,13 +1,13 @@
 # Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
-one:
-  left: one
-  right: one
-  task: one
-  task_type: Task
+stat1_2:
+  left: stat1
+  right: stat2
 
-two:
-  left: two
-  right: two
-  task: two
-  task_type: Task
+stat2_3:
+  left: stat2
+  right: stat3
+
+night1_2:
+  left: night1
+  right: night2

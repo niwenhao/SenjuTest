@@ -4,3 +4,11 @@
 require_relative 'config/application'
 
 Rails.application.load_tasks
+
+namespace :senju do
+  task :importjar => :environment do
+    SenjuJob.all.each do |j|
+      print "job =================> #{j.name}\n"
+    end
+  end
+end

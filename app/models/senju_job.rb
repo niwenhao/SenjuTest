@@ -5,6 +5,8 @@ class SenjuJob < ApplicationRecord
     CMD = 3
     DESC = 4
 
+    SENJU_TYPE = "ジョブ"
+
     belongs_to :senjuEnv
     belongs_to :task, polymorphic: true, dependent: :destroy
     belongs_to :preExec, polymorphic: true, dependent: :destroy

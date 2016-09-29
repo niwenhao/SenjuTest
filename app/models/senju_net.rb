@@ -6,12 +6,11 @@ class SenjuNet < ApplicationRecord
     REF_NAME = 4
     EXECENV = 9
 
-    JOB_TYPE = "ジョブ"
-    NET_TYPE = "ネット"
-    TRG_TYPE = "トリガ"
-
     PRECEDE_START = 20
     PRECEDE_COUNT = 30
+
+    SENJU_TYPE = "ネット"
+
   belongs_to :senjuEnv
   belongs_to :preExec, polymorphic: true, dependent: :destroy
   belongs_to :postExec, polymorphic: true, dependent: :destroy

@@ -15,9 +15,9 @@ class ImportSenjuScriptJob < ApplicationJob
   end
 
   def import_object(path)
-      f = File.new(path)
-      File::readable?(f) or raise "Failed to open #{path}"
+      File::readable?(path) or raise "Failed to open #{path}"
 
+      f = File.open(path, "r", external_encoding: Encoding::SJIS)
       f.each_line do |line|
           yield line.split /\t/
       end
@@ -48,7 +48,7 @@ class ImportSenjuScriptJob < ApplicationJob
                            description: items[SenjuJob::DESC],
                            command: items[SenjuJob::CMD],
                            expected: items[SenjuJob::EXPECTED].to_i)
-          if items[SenjuJob::EXECENV] <> "" then
+          if items[SenjuJob::EXECENV] != "" then
               env = SenjuEnv.find_by(name: items[SenjuJob::EXECENV])
               raise "実行環境(#{items[SenjuJob::EXECENV]})が存在しません" unless env
               e.senjuEnv = env
@@ -74,8 +74,8 @@ class ImportSenjuScriptJob < ApplicationJob
       netBuf = []
 
       import_object "#{WORK_DIR}/ネット.定義有効日.txt" do |items|
-          if items[SenjuNet::NAME] <> "" then
-              if netBuf.size > 0 and items[SenjuNet::NAME] <> netBuf[0][SenjuNet::NAME] then
+          if items[SenjuNet::NAME] != "" then
+              if netBuf.size > 0 and items[SenjuNet::NAME] != netBuf[0][SenjuNet::NAME] then
                   setupNet(netBuf.shift, netBuf)
               end
               netBuf.clear
@@ -95,7 +95,7 @@ class ImportSenjuScriptJob < ApplicationJob
 
       ent.description = net[SenjuNet::DESC]
       envname = net[SenjuNet::EXECENV]
-      if envname <> "" then
+      if envname != "" then
           env = SenjuEnv.find_by(name: envname)
           raise "実行環境(#{envname})が存在しません" unless env
           ent.senjuEnv = env
@@ -113,7 +113,9 @@ class ImportSenjuScriptJob < ApplicationJob
   end
 
   def addAssociation(net, child, pre_type, pre_name)
-      pre_child = net.netReferences.select { |r| r.senjuObject.name == pre_name }
+      pre_children = net.netReferences.select { |r| r.senjuObject.name == pre_name and r.senjuObject.class.SENJU_TYPE == pre_type }
+      raise "Failed to find object by (#{child_name}:#{child_type})" if pre_children.empty?
+      pre_child = pre_children.first
       succession = SenjuSuccession.new left: pre_child, right: child
   end
 
@@ -121,7 +123,10 @@ class ImportSenjuScriptJob < ApplicationJob
       child_type = items[SenjuNet::TYPE]
       child_name = items[SenjuNet::REF_NAME]
 
-      child = net.netReferences.select { |r| r.senjuObject.name == child_name }
+      children = net.netReferences.select { |r| r.senjuObject.name == child_name and r.senjuObject.class.SENJU_TYPE == child_type }
+
+      raise "Failed to find object by (#{child_name}:#{child_type})" if children.empty?
+      child = children.first
 
       for i in 0 .. SenjuNet::PRECEDE_COUNT - 1
           pre_type = items[SenjuNet::PRECEDE_START + i * 2]
@@ -147,17 +152,17 @@ class ImportSenjuScriptJob < ApplicationJob
       child_ref = NetReferences.new senjuNet: net
 
       case child_type
-      when SenjuNet::NET_TYPE then
+      when SenjuNet::SENJU_TYPE then
           child_ref.senjuObject = find_or_create_net(child_name)
-      when SenjuNet::JOB_TYPE then
+      when SenjuJob::SENJU_TYPE then
           child_ref.senjuObject = SenjuJob.find_by name: child_name
           raise "Failed to find job by #{child_name}" unless child_ref.senjuObject
-      when SenjuNet::TRG_TYPE then
+      when SenjuTriger::SENJU_TYPE then
           child_ref.senjuObject = SenjuTriger.find_by name: child_name
           raise "Failed to find triger by #{child_name}" unless child_ref.senjuObject
       end
 
-      if child_env <> "" then
+      if child_env != "" then
           child_ref.senjuEnv = SenjuEnv.find_by name: child_env
           raise "Failed to find environment by #{child_env}" unless child_ref.senjuEnv
       end

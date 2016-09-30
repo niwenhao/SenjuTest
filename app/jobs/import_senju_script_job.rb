@@ -14,9 +14,9 @@ class ImportSenjuScriptJob < ApplicationJob
     LOG.info { "Import jar file => #{@inputJar}" }
 
     SenjuNet.delete_all()
-    SenjuJob.delete_all()
-    SenjuTriger.delete_all()
-    ShellTask.delete_all()
+#    SenjuJob.delete_all()
+#    SenjuTriger.delete_all()
+#    ShellTask.delete_all()
     SenjuSuccession.delete_all()
     NetReference.delete_all()
 
@@ -24,16 +24,29 @@ class ImportSenjuScriptJob < ApplicationJob
     extrace_jar()
 
     LOG.info { "稼動環境定義を取り込み" }
-    import_env
+#    import_env
 
     LOG.info { "トリガ定義を取り込み" }
-    import_triger
+#    import_triger
 
     LOG.info { "ジョブ定義を取り込み" }
-    import_job
+#    import_job
 
     LOG.info { "ネット定義を取り込み" }
+    pre_import_net
     import_net
+  end
+
+  def pre_import_net
+    last_net_name = ""
+    import_object "#{WORK_DIR}/ネット.定義有効日.txt" do |items|
+      net_name = items[SenjuNet::NAME]
+      if net_name != "" && net_name != last_net_name then
+        e = SenjuNet.new(name: net_name)
+        raise "Failed to save => #{e.errors.full_messages}"  unless e.save
+        last_net_name = net_name
+      end
+    end
   end
 
   def import_object(path)
@@ -161,7 +174,7 @@ EOS
   def setupNet(net, children)
     name = net[SenjuNet::NAME]
     LOG.debug { "親ネット名：#{name}" }
-    ent = SenjuNet.find_or_create_by(name: name)
+    ent = SenjuNet.find_by(name: name)
     LOG.debug { "ent.description = #{net[SenjuNet::DESC]}" }
     ent.description = net[SenjuNet::DESC]
     LOG.debug { "envname = #{net[SenjuNet::EXEC_ENV]}" }
@@ -171,11 +184,15 @@ EOS
       raise "実行環境(#{envname})が存在しません" unless env
       ent.senjuEnv = env
     end
+
+    #raise "Failed to save => #{ent.errors.full_messages}" unless ent.save()
     
     LOG.debug { "ネットに所属するオブジェクトをとりこみ" }
     children.each do |items|
       appendChild(ent, items)
     end
+
+    #raise "Failed to save => #{ent.errors.full_messages}" unless ent.save()
     
     LOG.debug { "ネットに所属するオブジェクトの先行関係をとりこみ" }
     children.each do |items|
@@ -186,10 +203,13 @@ EOS
   end
 
   def addAssociation(net, child, pre_type, pre_name)
-    pre_children = net.netReferences.select { |r| r.senjuObject.name == pre_name and r.senjuObject.class.SENJU_TYPE == pre_type }
-    raise "Failed to find object by (#{child_name}:#{child_type})" if pre_children.empty?
+    pre_children = net.netReferences.select { |r| r.senjuObject.name == pre_name and r.senjuObject.class::SENJU_TYPE == pre_type }
+    raise "Failed to find object by (#{pre_name}:#{pre_type})" if pre_children.empty?
     pre_child = pre_children.first
     succession = SenjuSuccession.new left: pre_child, right: child
+    pre_child.rightLink << succession
+    child.leftLink << succession
+    #raise "Failed to save => #{succession.errors.full_messages}" unless succession.save()
   end
 
   def setupAssociation(net, items)
@@ -198,7 +218,7 @@ EOS
 
     LOG.debug { "ネット（#{net.name}）の子オブジェクト(#{child_name}:#{child_type})" }
 
-    children = net.netReferences.select { |r| r.senjuObject.name == child_name and r.senjuObject.class.SENJU_TYPE == child_type }
+    children = net.netReferences.select { |r| r.senjuObject.name == child_name and r.senjuObject.class::SENJU_TYPE == child_type }
 
     raise "Failed to find object by (#{child_name}:#{child_type})" if children.empty?
     child = children.first
@@ -206,20 +226,27 @@ EOS
     for i in 0 .. SenjuNet::PRECEDE_COUNT - 1
       pre_type = items[SenjuNet::PRECEDE_START + i * 2]
       pre_name = items[SenjuNet::PRECEDE_START + i * 2 + 1]
-      LOG.debug { "先行設定 #{pre_name}:#{pre_type} => #{child.senjuObject.name}#{child.senjuObject.class.SENJU_TYPE}" }
-      addAssociation(net, child, pre_type, pre_name)
+      if pre_name != "" then
+        LOG.debug { "先行設定 #{pre_name}:#{pre_type} => #{child.senjuObject.name}#{child.senjuObject.class::SENJU_TYPE}" }
+        addAssociation(net, child, pre_type, pre_name)
+      end
     end
 
     for i in 0 .. SenjuNet::TRIGER_COUNT - 1
-      pre_name = items[TRIGER_START + i]
-      LOG.debug { "先行設定 #{pre_name}:トリガ => #{child.senjuObject.name}#{child.senjuObject.class.SENJU_TYPE}" }
+      tgr_name = items[SenjuNet::TRIGER_START + i]
 
-      tgr_name = items[SenjuNet::REF_NAME]
-      senjuObject = SenjuTriger.find_by name: tgr_name
-      raise "Failed to find SenjuTriger by name: #{tgr_name}" unless senjuObject
-      NetReference.new senjuNet: net, senjuObject: senjuObject
+      if tgr_name != "" then
+        senjuObject = SenjuTriger.find_by name: tgr_name
+        raise "Failed to find SenjuTriger by name: #{tgr_name}" unless senjuObject
+        ref = NetReference.new(senjuNet: net, senjuObject: senjuObject)
+        #raise "Failed to save => #{ref.errors.full_messages}" unless ref.save()
 
-      addAssociation(net, child, SenjuTriger.SENJU_TYPE, tgr_name)
+        #net.reload
+        net.netReferences << ref
+
+        LOG.debug { "先行設定 #{tgr_name}:トリガ => #{child.senjuObject.name}#{child.senjuObject.class::SENJU_TYPE}" }
+        addAssociation(net, child, SenjuTriger::SENJU_TYPE, tgr_name)
+      end
     end
     
   end
@@ -243,7 +270,7 @@ EOS
 
     case child_type
     when SenjuNet::SENJU_TYPE then
-      child_ref.senjuObject = find_or_create_by name: child_name
+      child_ref.senjuObject = SenjuNet.find_by name: child_name
     when SenjuJob::SENJU_TYPE then
       child_ref.senjuObject = SenjuJob.find_by name: child_name
       raise "Failed to find job by #{child_name}" unless child_ref.senjuObject
@@ -253,6 +280,8 @@ EOS
       child_ref.senjuEnv = SenjuEnv.find_by name: child_env
       raise "Failed to find environment by #{child_env}" unless child_ref.senjuEnv
     end
+    #raise "Failed to save => #{child_ref.errors.full_messages}" unless child_ref.save()
+    net.netReferences << child_ref
   end
 
 end

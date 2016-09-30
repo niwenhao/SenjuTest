@@ -1,13 +1,16 @@
 class SenjuNet < ApplicationRecord
   NAME = 0
   AVA_DATE = 1
-  DESC = 2
-  TYPE = 3
-  REF_NAME = 4
-  EXECENV = 9
+  DESC = 3
+  TYPE = 4
+  REF_NAME = 5
+  EXEC_ENV = 9
 
-  PRECEDE_START = 20
-  PRECEDE_COUNT = 30
+  TRIGER_START = 14
+  TRIGER_COUNT = 32
+
+  PRECEDE_START = 46
+  PRECEDE_COUNT = 32
 
   SENJU_TYPE = "ネット"
 

@@ -3,7 +3,7 @@ class CreateSenjuNets < ActiveRecord::Migration[5.0]
     create_table :senju_nets do |t|
       t.string :name
       t.string :description
-      t.references :senjuEnv, foreign_key: true
+      t.references :senjuEnv
       t.references :preExec, polymorphic: true
       t.references :postExec, polymorphic: true
 

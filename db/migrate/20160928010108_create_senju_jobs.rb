@@ -5,7 +5,7 @@ class CreateSenjuJobs < ActiveRecord::Migration[5.0]
       t.string :description
       t.string :command
       t.integer :expected
-      t.references :senjuEnv, foreign_key: true
+      t.references :senjuEnv
       t.references :task, polymorphic: true
       t.references :preExec, polymorphic: true
       t.references :postExec, polymorphic: true

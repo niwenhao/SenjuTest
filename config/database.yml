@@ -11,9 +11,8 @@ default: &default
 
 development:
   adapter: postgresql
-  #encoding: utf8
   database: senjudb
-  host: 10.200.0.11
+  host: localhost
   username: senju
   password: password
 

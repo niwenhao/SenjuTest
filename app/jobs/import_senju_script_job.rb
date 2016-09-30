@@ -14,9 +14,9 @@ class ImportSenjuScriptJob < ApplicationJob
     LOG.info { "Import jar file => #{@inputJar}" }
 
     SenjuNet.delete_all()
-#    SenjuJob.delete_all()
-#    SenjuTriger.delete_all()
-#    ShellTask.delete_all()
+    SenjuJob.delete_all()
+    SenjuTriger.delete_all()
+    ShellTask.delete_all()
     SenjuSuccession.delete_all()
     NetReference.delete_all()
 
@@ -24,13 +24,13 @@ class ImportSenjuScriptJob < ApplicationJob
     extrace_jar()
 
     LOG.info { "稼動環境定義を取り込み" }
-#    import_env
+    import_env
 
     LOG.info { "トリガ定義を取り込み" }
-#    import_triger
+    import_triger
 
     LOG.info { "ジョブ定義を取り込み" }
-#    import_job
+    import_job
 
     LOG.info { "ネット定義を取り込み" }
     pre_import_net
@@ -215,6 +215,7 @@ EOS
   def setupAssociation(net, items)
     child_type = items[SenjuNet::TYPE]
     child_name = items[SenjuNet::REF_NAME]
+    child_type = SenjuNet::SENJU_TYPE if child_type == "ノードグループネット"
 
     LOG.debug { "ネット（#{net.name}）の子オブジェクト(#{child_name}:#{child_type})" }
 
@@ -253,6 +254,7 @@ EOS
 
   def appendChild(net, items)
     child_type = items[SenjuNet::TYPE]
+    child_type = SenjuNet::SENJU_TYPE if child_type == "ノードグループネット"
     child_name = items[SenjuNet::REF_NAME]
     child_env = items[SenjuNet::EXEC_ENV]
     child_ent = nil
